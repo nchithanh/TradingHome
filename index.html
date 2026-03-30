@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FireAnt Downloader</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      corePlugins: { preflight: false }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Light theme — nền chính trắng */
+    :root {
+      --tv-bg: #ffffff;
+      --tv-bg-secondary: #f8fafc;
+      --tv-bg-tertiary: #f1f5f9;
+      --tv-border: #e2e8f0;
+      --tv-text: #0f172a;
+      --tv-text-secondary: #64748b;
+      --tv-accent: #2563eb;
+      --tv-green: #0d9488;
+      --tv-red: #dc2626;
+      color-scheme: light;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+/* ===================== DARK ===================== */
+/* :root {
+  --tv-bg: #0f172a;
+  --tv-bg-secondary: #111827;
+  --tv-bg-tertiary: #1f2933;
+  --tv-border: #374151;
+  --tv-text: #e5e7eb;
+  --tv-text-secondary: #9ca3af;
+  --tv-accent: #3b82f6;
+  --tv-green: #10b981;
+  --tv-red: #ef4444;
+  color-scheme: dark;
+} */
+
+/* ===================== OCEAN ===================== */
+/* :root {
+  --tv-bg: #0b1220;
+  --tv-bg-secondary: #0f1b2d;
+  --tv-bg-tertiary: #14243a;
+  --tv-border: #1e3a5f;
+  --tv-text: #dbeafe;
+  --tv-text-secondary: #93c5fd;
+  --tv-accent: #38bdf8;
+  --tv-green: #22c55e;
+  --tv-red: #f87171;
+  color-scheme: dark;
+} */
+
+/* ===================== PASTEL ===================== */
+/* :root {
+  --tv-bg: #fdf2f8;
+  --tv-bg-secondary: #fce7f3;
+  --tv-bg-tertiary: #fbcfe8;
+  --tv-border: #f9a8d4;
+  --tv-text: #831843;
+  --tv-text-secondary: #9d174d;
+  --tv-accent: #ec4899;
+  --tv-green: #34d399;
+  --tv-red: #fb7185;
+  color-scheme: light;
+} */
+
+/* ===================== MATRIX ===================== */
+/* :root {
+  --tv-bg: #020617;
+  --tv-bg-secondary: #020617;
+  --tv-bg-tertiary: #052e16;
+  --tv-border: #14532d;
+  --tv-text: #86efac;
+  --tv-text-secondary: #4ade80;
+  --tv-accent: #22c55e;
+  --tv-green: #22c55e;
+  --tv-red: #f87171;
+  color-scheme: dark;
+} */
+
+/* ===================== WARM ===================== */
+/* :root {
+  --tv-bg: #fffaf0;
+  --tv-bg-secondary: #fef3c7;
+  --tv-bg-tertiary: #fde68a;
+  --tv-border: #fcd34d;
+  --tv-text: #78350f;
+  --tv-text-secondary: #92400e;
+  --tv-accent: #f59e0b;
+  --tv-green: #16a34a;
+  --tv-red: #dc2626;
+  color-scheme: light;
+} */
+
+/* ===================== HIGH CONTRAST ===================== */
+/* :root {
+  --tv-bg: #000000;
+  --tv-bg-secondary: #0a0a0a;
+  --tv-bg-tertiary: #1a1a1a;
+  --tv-border: #ffffff;
+  --tv-text: #ffffff;
+  --tv-text-secondary: #d1d5db;
+  --tv-accent: #ffff00;
+  --tv-green: #00ff00;
+  --tv-red: #ff0000;
+  color-scheme: dark;
+} */
+
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--tv-bg);
+      color: var(--tv-text);
+      padding: 24px;
+      padding-top: 72px;
+      padding-bottom: 320px;
+      box-sizing: border-box;
+    }
+
+    .overview-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 12px 24px;
+      background: var(--tv-bg-secondary);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--tv-border);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+    .overview-header-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .overview-header-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--tv-text-secondary);
+    }
+    .overview-header-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    main {
+      width: 100%;
+      min-height: calc(100vh - 48px);
+      background: var(--tv-bg-secondary);
+      border: 1px solid var(--tv-border);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+      box-sizing: border-box;
+    }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    p,
+    li,
+    label,
+    button,
+    input,
+    textarea,
+    pre {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    input,
+    textarea,
+    button,
+    select {
+      border-radius: 4px;
+      border: 1px solid var(--tv-border);
+      background: var(--tv-bg);
+      color: var(--tv-text);
+      padding: 10px 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--tv-accent);
+      box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.25);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+      background: var(--tv-accent);
+      border-color: var(--tv-accent);
+      color: #ffffff;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover {
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button[disabled] {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .secondary-button {
+      background: var(--tv-bg-tertiary);
+      border-color: var(--tv-border);
+      color: var(--tv-text);
+    }
+    .secondary-button:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+      color: var(--tv-text);
+    }
+
+    code {
+      background: var(--tv-bg);
+      color: var(--tv-text);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--tv-border);
+    }
+
+    .note {
+      color: var(--tv-text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .summary {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 4px;
+      background: var(--tv-bg);
+      border: 1px solid var(--tv-border);
+      color: var(--tv-text);
+      white-space: pre-wrap;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .overview-card {
+      background: var(--tv-bg);
+      border: 1px solid var(--tv-border);
+      border-radius: 4px;
+      padding: 16px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .overview-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .overview-label {
+      color: var(--tv-text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .overview-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .overview-subtext {
+      margin-top: 8px;
+      color: var(--tv-text-secondary);
+      font-size: 12px;
+    }
+
+    .log {
+      margin-top: 16px;
+      background: var(--tv-bg);
+      border-radius: 4px;
+      border: 1px solid var(--tv-border);
+      color: var(--tv-text-secondary);
+      padding: 16px;
+      min-height: 220px;
+      max-height: 420px;
+      overflow: auto;
+      font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      margin-top: 16px;
+      overflow: auto;
+      max-height: min(480px, 55vh);
+      border: 1px solid var(--tv-border);
+      border-radius: 4px;
+      background: var(--tv-bg);
+    }
+
+    .table-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid var(--tv-border);
+      background: var(--tv-bg-secondary);
+    }
+
+    .table-toolbar:empty {
+      display: none;
+    }
+
+    .hidden-columns-label {
+      color: var(--tv-text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-right: 4px;
+    }
+
+    .hidden-column-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--tv-border);
+      background: var(--tv-bg);
+      color: var(--tv-text-secondary);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    .hidden-column-chip button,
+    .column-hide-button,
+    .restore-columns-button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      cursor: pointer;
+      border-radius: 999px;
+    }
+
+    .restore-columns-button {
+      padding: 4px 10px;
+      border: 1px solid var(--tv-border);
+      background: var(--tv-bg-tertiary);
+      color: var(--tv-text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--tv-border);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      background: var(--tv-bg);
+    }
+
+    th {
+      position: sticky;
+      background: var(--tv-bg-secondary);
+      z-index: 2;
+    }
+
+    thead tr:first-child th {
+      top: 0;
+      z-index: 4;
+      background: var(--tv-bg-tertiary);
+      text-align: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    thead tr:nth-child(2) th {
+      top: 39px;
+      z-index: 3;
+    }
+
+    .group-header {
+      border-bottom: 1px solid var(--tv-border);
+      color: var(--tv-text-secondary);
+    }
+
+    .sub-header {
+      background: var(--tv-bg-secondary);
+    }
+
+    .group-end {
+      border-right: 2px solid var(--tv-border);
+    }
+
+    .group-end:last-child {
+      border-right: none;
+    }
+
+    .sort-button {
+      all: unset;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: inherit;
+      font-weight: 700;
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    th:first-child .sort-button {
+      justify-content: flex-start;
+    }
+
+    .sort-indicator {
+      color: var(--tv-accent);
+      font-size: 12px;
+    }
+
+    .header-cell-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .header-cell-content .sort-button {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .column-hide-button {
+      width: 18px;
+      height: 18px;
+      color: var(--tv-text-secondary);
+      font-size: 14px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .column-hide-button:hover,
+    .hidden-column-chip button:hover,
+    .restore-columns-button:hover {
+      color: var(--tv-text);
+    }
+
+    .positive {
+      color: var(--tv-green);
+      font-weight: 600;
+    }
+
+    .negative {
+      color: var(--tv-red);
+      font-weight: 600;
+    }
+
+    .bottom-signal-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--tv-green);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.7), 0 0 10px rgba(34, 197, 94, 0.35);
+    }
+
+    .bottom-signal-cell {
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .bottom-signal-cell .bottom-signal-dot {
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.9), 0 0 14px rgba(34, 197, 94, 0.5);
+    }
+
+    .buy-suggestion-cell {
+      color: var(--tv-green);
+      font-weight: 700;
+    }
+
+    .detail-buy-signals .detail-buy-signal-row.pass {
+      color: var(--tv-green);
+    }
+
+    .detail-buy-signals .detail-buy-signal-row.fail {
+      color: var(--tv-text-secondary);
+    }
+
+    .notify-section { margin: 16px 0; padding: 12px; background: var(--tv-bg); border: 1px solid var(--tv-border); border-radius: 4px; }
+    .notify-section label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-right: 16px; }
+    .notify-options { margin: 8px 0; display: flex; flex-wrap: wrap; gap: 12px; }
+    .notify-channels { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .notify-channels input { flex: 1; min-width: 120px; }
+
+    .collapsible-tab { margin: 24px 0; background: var(--tv-bg); border: 1px solid var(--tv-border); border-radius: 4px; overflow: hidden; }
+    .collapsible-tab-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; background: var(--tv-bg-tertiary); border-bottom: 1px solid var(--tv-border); }
+    .collapsible-tab-header:hover { background: #e2e8f0; }
+    .collapsible-tab-header .tab-toggle { font-size: 12px; color: var(--tv-text-secondary); transition: transform 0.2s; }
+    .collapsible-tab.collapsed .tab-toggle { transform: rotate(-90deg); }
+    .collapsible-tab.collapsed .collapsible-tab-body { display: none; }
+    .collapsible-tab-body { position: relative; overflow: hidden; }
+    .collapsible-tab-body-inner { padding: 16px; overflow: auto; }
+    .resize-handle { height: 6px; cursor: ns-resize; background: var(--tv-border); position: relative; }
+    .resize-handle:hover { background: var(--tv-accent); }
+    .resize-handle::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 4px; background: var(--tv-text-secondary); border-radius: 2px; opacity: 0.6; }
+    .resize-handle:hover::after { opacity: 1; }
+    .collapsible-tab.collapsed .resize-handle { display: none; }
+    .overview-tab-title { font-size: 18px; font-weight: 600; }
+
+    .portfolio-section { margin: 0; border: none; border-radius: 0; }
+    .portfolio-section .collapsible-tab-body-inner { padding-bottom: 8px; }
+    .portfolio-title { margin: 0 0 8px; font-size: 18px; }
+    .portfolio-desc { margin: 0 0 16px; color: var(--tv-text-secondary); font-size: 13px; }
+    .portfolio-table-wrap { overflow: auto; margin-bottom: 12px; }
+    .portfolio-table { width: 100%; border-collapse: collapse; }
+    .portfolio-table th, .portfolio-table td { padding: 10px 12px; border-bottom: 1px solid var(--tv-border); text-align: left; }
+    .portfolio-table th { color: var(--tv-text-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .portfolio-table input { width: 100%; min-width: 80px; box-sizing: border-box; }
+    .portfolio-table .portfolio-total-cell { font-weight: 700; color: var(--tv-green); }
+    .portfolio-table .portfolio-del-btn { padding: 4px 10px; font-size: 12px; }
+    .portfolio-table tr.portfolio-row-profit { border-left: 3px solid rgba(38, 166, 154, 0.5); }
+    .portfolio-table tr.portfolio-row-loss { border-left: 3px solid rgba(242, 54, 69, 0.5); }
+    .portfolio-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .portfolio-summary { color: var(--tv-text-secondary); font-size: 13px; }
+    .portfolio-summary strong { color: var(--tv-text); }
+
+    .cash-section { margin: 0; border: none; border-radius: 0; }
+    .cash-section .collapsible-tab-body-inner { padding-bottom: 8px; }
+    .cash-title { margin: 0 0 8px; font-size: 18px; }
+    .cash-desc { margin: 0 0 16px; color: var(--tv-text-secondary); font-size: 13px; }
+    .cash-table-wrap { overflow: auto; margin-bottom: 12px; }
+    .cash-table { width: 100%; border-collapse: collapse; }
+    .cash-table th, .cash-table td { padding: 10px 12px; border-bottom: 1px solid var(--tv-border); text-align: left; }
+    .cash-table th { color: var(--tv-text-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cash-table input, .cash-table select { width: 100%; min-width: 80px; box-sizing: border-box; }
+    .cash-table input.cash-created-at { min-width: 180px; }
+    .cash-table .cash-del-btn { padding: 4px 10px; font-size: 12px; }
+    .cash-table .cash-type-deposit { color: var(--tv-green); font-weight: 600; }
+    .cash-table .cash-type-withdrawal { color: var(--tv-red); font-weight: 600; }
+    .cash-table tr.cash-row-deposit { border-left: 3px solid rgba(38, 166, 154, 0.5); }
+    .cash-table tr.cash-row-withdrawal { border-left: 3px solid rgba(242, 54, 69, 0.5); }
+    .cash-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .cash-summary { color: var(--tv-text-secondary); font-size: 13px; }
+    .cash-summary strong { color: var(--tv-text); }
+
+    .derivatives-section { margin: 0; border: none; border-radius: 0; }
+    .derivatives-section .collapsible-tab-body-inner { padding-bottom: 8px; }
+    .sim-derivatives-section { margin: 0; border: none; border-radius: 0; }
+    .sim-derivatives-section .collapsible-tab-body-inner { padding-bottom: 8px; }
+    .sim-derivatives-table tr.sim-deriv-row-long { border-left: 3px solid rgba(38, 166, 154, 0.5); }
+    .sim-derivatives-table tr.sim-deriv-row-short { border-left: 3px solid rgba(242, 54, 69, 0.5); }
+    .sim-deriv-pnl-total.positive { color: var(--tv-green); }
+    .sim-deriv-pnl-total.negative { color: var(--tv-red); }
+    .derivatives-title { margin: 0 0 8px; font-size: 18px; }
+    .derivatives-desc { margin: 0 0 16px; color: var(--tv-text-secondary); font-size: 13px; }
+    .derivatives-table-wrap { overflow: auto; margin-bottom: 12px; }
+    .derivatives-table { width: 100%; border-collapse: collapse; }
+    .derivatives-table th, .derivatives-table td { padding: 10px 12px; border-bottom: 1px solid var(--tv-border); text-align: left; }
+    .derivatives-table th { color: var(--tv-text-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .derivatives-table input, .derivatives-table select { width: 100%; min-width: 80px; box-sizing: border-box; }
+    .derivatives-table .derivatives-del-btn { padding: 4px 10px; font-size: 12px; }
+    .derivatives-table tr.derivatives-row-long { border-left: 3px solid rgba(38, 166, 154, 0.5); }
+    .derivatives-table tr.derivatives-row-short { border-left: 3px solid rgba(242, 54, 69, 0.5); }
+    .derivatives-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .derivatives-summary { color: var(--tv-text-secondary); font-size: 13px; }
+    .derivatives-summary strong { color: var(--tv-text); }
+    .derivatives-type-long { color: var(--tv-green); font-weight: 600; }
+    .derivatives-type-short { color: var(--tv-red); font-weight: 600; }
+
+    .tab-search-hint {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--tv-text-secondary);
+      line-height: 1.4;
+    }
+
+    .tab-search-wrap { margin-bottom: 8px; }
+    .tab-search-input {
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    tr.hidden-by-tab-search {
+      visibility: collapse;
+    }
+    .overview-card.hidden-by-tab-search {
+      display: none !important;
+    }
+    tr.tab-search-no-match td {
+      text-align: center;
+      color: var(--tv-text-secondary);
+      padding: 16px;
+      font-size: 13px;
+    }
+    .tab-search-no-match-msg {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--tv-text-secondary);
+      background: var(--tv-bg-tertiary);
+      border: 1px dashed var(--tv-border);
+      border-radius: 4px;
+    }
+    .tab-search-no-match-msg[hidden] {
+      display: none !important;
+    }
+
+    .sortable-th {
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .sortable-th:hover { color: var(--tv-text); }
+    .sortable-th .sortable-label { margin-right: 4px; }
+    .sort-indicator-small { font-size: 10px; color: var(--tv-accent); }
+    .sort-indicator-small.active { font-weight: 700; }
+
+    .signal-cell {
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 6px 10px;
+      text-align: center;
+    }
+
+    .signal-short {
+      color: var(--tv-red);
+      background: rgba(242, 54, 69, 0.2);
+    }
+
+    .signal-hold {
+      color: #f0b429;
+      background: rgba(240, 180, 41, 0.2);
+    }
+
+    .signal-stop {
+      color: var(--tv-green);
+      background: rgba(38, 166, 154, 0.2);
+    }
+
+    .signal-watch {
+      color: var(--tv-accent);
+      background: rgba(41, 98, 255, 0.2);
+    }
+
+    .signal-risk {
+      color: #ff6b35;
+      background: rgba(255, 107, 53, 0.2);
+    }
+
+    .signal-neutral {
+      color: var(--tv-text-secondary);
+      background: rgba(120, 123, 134, 0.15);
+    }
+
+    .clickable-row {
+      cursor: pointer;
+    }
+
+    .clickable-row:hover td {
+      background: var(--tv-bg-tertiary);
+    }
+
+    .selected-row td {
+      background: rgba(41, 98, 255, 0.12);
+    }
+
+    .selected-cell {
+      outline: 1px solid var(--tv-accent);
+      outline-offset: -1px;
+    }
+
+    .detail-panel {
+      padding: 16px;
+      border-radius: 4px;
+      background: var(--tv-bg-secondary);
+      border: 1px solid var(--tv-border);
+      position: fixed;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      max-height: min(280px, 40vh);
+      overflow: auto;
+      box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .detail-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .detail-card {
+      border: 1px solid var(--tv-border);
+      border-radius: 4px;
+      background: var(--tv-bg);
+      padding: 12px;
+    }
+
+    .detail-card.active {
+      border-color: var(--tv-accent);
+      box-shadow: 0 0 0 1px var(--tv-accent) inset;
+    }
+
+    .detail-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .detail-basis-risk-explain { margin-top: 8px; font-size: 13px; }
+    .detail-basis-risk-row { margin: 4px 0; font-size: 12px; color: var(--tv-text-secondary); }
+    .detail-basis-risk-row.triggered { color: var(--tv-red); font-weight: 700; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay[hidden] { display: none; }
+    .modal-content { background: var(--tv-bg); border: 1px solid var(--tv-border); border-radius: 8px; max-width: 560px; width: 100%; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--tv-border); }
+    .modal-header h2 { margin: 0; font-size: 18px; color: var(--tv-text); }
+    .modal-close { background: none; border: none; color: var(--tv-text-secondary); font-size: 24px; cursor: pointer; }
+    .modal-close:hover { color: var(--tv-text); }
+    .modal-body { padding: 20px; overflow-y: auto; }
+    .suggest-results { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .suggest-chip { background: rgba(38, 166, 154, 0.2); color: var(--tv-green); border: 1px solid var(--tv-green); border-radius: 4px; padding: 6px 12px; font-weight: 600; cursor: pointer; }
+    .suggest-chip:hover { background: rgba(38, 166, 154, 0.3); }
+    .detail-card p {
+      margin: 4px 0;
+      color: var(--tv-text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+        padding-top: 64px;
+        padding-bottom: 300px;
+      }
+      .overview-header {
+        padding: 10px 16px;
+        gap: 20px;
+      }
+      .overview-header-value {
+        font-size: 16px;
+      }
+
+      .detail-panel {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        max-height: min(260px, 45vh);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="overview-header" id="overviewHeader">
+    <div class="overview-header-item">
+      <span class="overview-header-label" id="overviewHeaderInitialAssetLabel">Tổng tài sản lúc đầu</span>
+      <span class="overview-header-value" id="overviewHeaderInitialAssetValue">-</span>
+    </div>
+    <div class="overview-header-item">
+      <span class="overview-header-label" id="overviewHeaderPnLLabel">Lãi/lỗ</span>
+      <span class="overview-header-value" id="overviewHeaderPnLValue">-</span>
+    </div>
+    <div class="overview-header-item">
+      <span class="overview-header-label" id="overviewHeaderNetAssetLabel">Tài sản ròng</span>
+      <span class="overview-header-value" id="overviewHeaderNetAssetValue">-</span>
+    </div>
+  </header>
+  <main>
+    <h1 id="appTitle">FireAnt Downloader</h1>
+    <p id="noteIntro" class="note">
+      Page nay co the doc du lieu co san trong <code>data</code> de hien mapping ngay,
+      hoac goi API FireAnt de tai va cap nhat file JSON.
+    </p>
+    <p id="noteUsage" class="note">
+      Nen mo file qua <code>http://localhost</code> hoac mot local server de trinh duyet cho phep
+      chon thu muc va ghi file. Ban co the chon truc tiep thu muc <code>data</code> hoac chon thu muc
+      goc cua project.
+    </p>
+
+    <div class="collapsible-tab" id="portfolioTab" data-tab-id="portfolio">
+      <div class="collapsible-tab-header">
+        <h2 class="portfolio-title" id="portfolioSectionTitle">Danh mục</h2>
+        <span class="tab-toggle">▼</span>
+      </div>
+      <div class="collapsible-tab-body">
+        <div class="collapsible-tab-body-inner">
+    <section class="portfolio-section" id="portfolioSection">
+      <p class="portfolio-desc" id="portfolioSectionDesc">Nhập mã CK, giá vốn, số lượng. Lãi/lỗ theo giá đóng cửa ngày mới nhất trong bảng data.</p>
+      <div class="tab-search-wrap">
+        <input type="search" id="portfolioTabSearch" class="tab-search-input" placeholder="" autocomplete="off" />
+      </div>
+      <p id="portfolioTabSearchHint" class="tab-search-hint"></p>
+      <div class="portfolio-table-wrap">
+        <table class="portfolio-table" id="portfolioTable">
+          <thead>
+            <tr>
+              <th id="portfolioColSymbol" class="sortable-th" data-sort-col="0"><span class="sortable-label">Mã</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColPrice" class="sortable-th" data-sort-col="1"><span class="sortable-label">Giá vốn</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColQty" class="sortable-th" data-sort-col="2"><span class="sortable-label">SL</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColTotal" class="sortable-th" data-sort-col="3"><span class="sortable-label">Tổng vốn</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColCurrentPrice" class="sortable-th" data-sort-col="4"><span class="sortable-label">Giá HT</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColSellPrice" class="sortable-th" data-sort-col="5"><span class="sortable-label">Giá bán</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColMarginPct" class="sortable-th" data-sort-col="6"><span class="sortable-label">Margin %</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColPnL" class="sortable-th" data-sort-col="7"><span class="sortable-label">Lãi/lỗ</span><span class="sort-indicator-small"></span></th>
+              <th id="portfolioColPnLPct" class="sortable-th" data-sort-col="8"><span class="sortable-label">Lãi/lỗ %</span><span class="sort-indicator-small"></span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="portfolioBody"></tbody>
+        </table>
+      </div>
+      <div class="portfolio-actions">
+        <button type="button" id="portfolioAddRow" class="secondary-button">+ Thêm dòng</button>
+        <span class="portfolio-summary"><span id="portfolioTotalLabel">Tổng vốn:</span> <strong id="portfolioTotalValue">0</strong></span>
+        <span class="portfolio-summary"><span id="portfolioCurrentLabel">Tổng hiện tại:</span> <strong id="portfolioCurrentValue">0</strong></span>
+        <span class="portfolio-summary"><span id="portfolioPnLLabel">Lãi/lỗ:</span> <strong id="portfolioPnLValue">0</strong></span>
+        <span class="portfolio-summary"><span id="portfolioDebtLabel">Tổng nợ:</span> <strong id="portfolioDebtValue">0</strong></span>
+      </div>
+    </section>
+        </div>
+        <div class="resize-handle" data-resize-tab="portfolio"></div>
+      </div>
+    </div>
+
+    <div class="collapsible-tab" id="cashTab" data-tab-id="cash">
+      <div class="collapsible-tab-header">
+        <h2 class="cash-title" id="cashSectionTitle">Tiền mặt</h2>
+        <span class="tab-toggle">▼</span>
+      </div>
+      <div class="collapsible-tab-body">
+        <div class="collapsible-tab-body-inner">
+    <section class="cash-section" id="cashSection">
+      <p class="cash-desc" id="cashSectionDesc">Nhập lệnh nộp/rút tiền, số tiền, mô tả.</p>
+      <div class="tab-search-wrap">
+        <input type="search" id="cashTabSearch" class="tab-search-input" placeholder="" autocomplete="off" />
+      </div>
+      <p id="cashTabSearchHint" class="tab-search-hint"></p>
+      <div class="cash-table-wrap">
+        <table class="cash-table" id="cashTable">
+          <thead>
+            <tr>
+              <th id="cashColType" class="sortable-th" data-sort-col="0"><span class="sortable-label">Loại</span><span class="sort-indicator-small"></span></th>
+              <th id="cashColAmount" class="sortable-th" data-sort-col="1"><span class="sortable-label">Số tiền</span><span class="sort-indicator-small"></span></th>
+              <th id="cashColDesc" class="sortable-th" data-sort-col="2"><span class="sortable-label">Mô tả</span><span class="sort-indicator-small"></span></th>
+              <th id="cashColCreatedAt" class="sortable-th" data-sort-col="3"><span class="sortable-label">Tạo lúc</span><span class="sort-indicator-small"></span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cashBody"></tbody>
+        </table>
+      </div>
+      <div class="cash-actions">
+        <button type="button" id="cashAddRow" class="secondary-button">+ Thêm dòng</button>
+        <span class="cash-summary"><span id="cashTotalLabel">Tổng tiền mặt:</span> <strong id="cashTotalValue">0</strong></span>
+      </div>
+    </section>
+        </div>
+        <div class="resize-handle" data-resize-tab="cash"></div>
+      </div>
+    </div>
+
+    <div class="collapsible-tab" id="overviewTab" data-tab-id="overview">
+      <div class="collapsible-tab-header">
+        <span class="overview-tab-title" id="overviewTabTitle">Tổng quan</span>
+        <span class="tab-toggle">▼</span>
+      </div>
+      <div class="collapsible-tab-body">
+        <div class="collapsible-tab-body-inner">
+      <div class="tab-search-wrap">
+        <input type="search" id="overviewTabSearch" class="tab-search-input" placeholder="" autocomplete="off" />
+      </div>
+      <p id="overviewTabSearchNoMatch" class="tab-search-no-match-msg" hidden></p>
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div id="overviewVn30Label" class="overview-label">VN30 asset overview</div>
+        <div id="overviewVn30Value" class="overview-value">-</div>
+        <div id="overviewVn30Subtext" class="overview-subtext"></div>
+      </div>
+      <div class="overview-card">
+        <div id="overviewFuturesLabel" class="overview-label">VN30F1M P/L overview</div>
+        <div id="overviewFuturesValue" class="overview-value">-</div>
+        <div id="overviewFuturesSubtext" class="overview-subtext"></div>
+      </div>
+      <div class="overview-card">
+        <div id="overviewTotalLabel" class="overview-label">Total asset overview</div>
+        <div id="overviewTotalValue" class="overview-value">-</div>
+        <div id="overviewTotalSubtext" class="overview-subtext"></div>
+      </div>
+    </div>
+        </div>
+        <div class="resize-handle" data-resize-tab="overview"></div>
+      </div>
+    </div>
+
+    <div class="collapsible-tab" id="derivativesTab" data-tab-id="derivatives">
+      <div class="collapsible-tab-header">
+        <h2 class="derivatives-title" id="derivativesSectionTitle">Phái sinh</h2>
+        <span class="tab-toggle">▼</span>
+      </div>
+      <div class="collapsible-tab-body">
+        <div class="collapsible-tab-body-inner">
+    <section class="derivatives-section" id="derivativesSection">
+      <p class="derivatives-desc" id="derivativesSectionDesc">Nhập các lệnh phái sinh: mã hợp đồng, long/short, số lượng, giá.</p>
+      <div class="tab-search-wrap">
+        <input type="search" id="derivativesTabSearch" class="tab-search-input" placeholder="" autocomplete="off" />
+      </div>
+      <p id="derivativesTabSearchHint" class="tab-search-hint"></p>
+      <div class="derivatives-table-wrap">
+        <table class="derivatives-table" id="derivativesTable">
+          <thead>
+            <tr>
+              <th id="derivColSymbol" class="sortable-th" data-sort-col="0"><span class="sortable-label">Mã HĐ</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColType" class="sortable-th" data-sort-col="1"><span class="sortable-label">Loại</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColQty" class="sortable-th" data-sort-col="2"><span class="sortable-label">SL</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColPrice" class="sortable-th" data-sort-col="3"><span class="sortable-label">Giá vào</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColClosePrice" class="sortable-th" data-sort-col="4"><span class="sortable-label">Giá đóng</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColPnL" class="sortable-th" data-sort-col="5"><span class="sortable-label">Lãi/lỗ</span><span class="sort-indicator-small"></span></th>
+              <th id="derivColDesc" class="sortable-th" data-sort-col="6"><span class="sortable-label">Mô tả</span><span class="sort-indicator-small"></span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="derivativesBody"></tbody>
+        </table>
+      </div>
+      <div class="derivatives-actions">
+        <button type="button" id="derivativesAddRow" class="secondary-button">+ Thêm dòng</button>
+        <span class="derivatives-summary"><span id="derivativesTotalLabel">Tổng lệnh:</span> <strong id="derivativesTotalValue">0</strong></span>
+        <span class="derivatives-summary"><span id="derivativesPnLLabel">Tổng lãi/lỗ:</span> <strong id="derivativesPnLValue" class="derivatives-pnl-total">0</strong></span>
+      </div>
+    </section>
+        </div>
+        <div class="resize-handle" data-resize-tab="derivatives"></div>
+      </div>
+    </div>
+
+    <div class="collapsible-tab" id="simDerivativesTab" data-tab-id="simDerivatives">
+      <div class="collapsible-tab-header">
+        <h2 class="derivatives-title" id="simDerivativesSectionTitle">Mô phỏng phái sinh</h2>
+        <span class="tab-toggle">▼</span>
+      </div>
+      <div class="collapsible-tab-body">
+        <div class="collapsible-tab-body-inner">
+    <section class="sim-derivatives-section" id="simDerivativesSection">
+      <p class="derivatives-desc" id="simDerivativesSectionDesc">Mô phỏng — không tính vào tổng tài sản.</p>
+      <div class="derivatives-actions">
+        <button type="button" id="simDerivAddRow" class="secondary-button">+ Thêm dòng</button>
+        <button type="button" id="simDerivClearLog" class="secondary-button">Xóa mô phỏng</button>
+        <span class="derivatives-summary"><span id="simDerivTotalPnLLabel">Tổng Lãi/lỗ (mô phỏng)</span>: <strong id="simDerivTotalPnLValue" class="sim-deriv-pnl-total">0</strong></span>
+      </div>
+      <div class="derivatives-table-wrap">
+        <table class="derivatives-table sim-derivatives-table" id="simDerivativesTable">
+          <thead>
+            <tr>
+              <th id="simDerivColType">Loại</th>
+              <th id="simDerivColQty">SL</th>
+              <th id="simDerivColEntry">Giá vào</th>
+              <th id="simDerivColClose">Giá đóng</th>
+              <th id="simDerivColPnL">Lãi/lỗ</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="simDerivativesBody"></tbody>
+        </table>
+      </div>
+    </section>
+        </div>
+        <div class="resize-handle" data-resize-tab="simDerivatives"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label id="tokenLabel" for="token">Bearer token</label>
+      <textarea id="token" placeholder="Dan Bearer token vao day. Co the dan ca chu Bearer ..."></textarea>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label id="languageLabel" for="languageSelect">Language</label>
+        <select id="languageSelect">
+          <option value="vi">Tiếng Việt</option>
+          <option value="ja">日本語</option>
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+      <div class="field">
+        <label id="symbolsLabel" for="symbols">Symbols</label>
+        <input id="symbols" type="text" value="VN30,VN30F1M" placeholder="VD: VN30,VN30F1M,HPG,SSI" />
+      </div>
+      <div class="field">
+        <label id="startDateLabel" for="startDate">Start date</label>
+        <input id="startDate" type="date" value="2025-01-01" />
+      </div>
+      <div class="field">
+        <label id="endDateLabel" for="endDate">End date</label>
+        <input id="endDate" type="date" value="2026-03-07" />
+      </div>
+    </div>
+
+    <div class="field notify-section">
+      <label><input type="checkbox" id="notifyEnabled" /> <span id="notifyEnabledLabel">Bật thông báo</span></label>
+      <div class="notify-options">
+        <label><input type="checkbox" id="notifyOnHedgeChange" /> <span id="notifyOnHedgeLabel">Khi đổi trạng thái hedge</span></label>
+        <label><input type="checkbox" id="notifyOnBuySignal" /> <span id="notifyOnBuyLabel">Khi có gợi ý mua (4/7)</span></label>
+      </div>
+      <div class="notify-channels">
+        <input id="telegramBotToken" type="text" placeholder="Telegram Bot Token" />
+        <input id="telegramChatId" type="text" placeholder="Telegram Chat ID" />
+        <input id="discordWebhookUrl" type="text" placeholder="Discord Webhook URL" />
+      </div>
+      <button id="saveSettingsButton" class="secondary-button" type="button">Lưu cài đặt</button>
+    </div>
+
+    <div class="actions">
+      <button id="loadButton" class="secondary-button" type="button">Doc data co san</button>
+      <button id="pipButton" class="secondary-button" type="button">Mở cửa sổ nổi (PiP)</button>
+      <button id="suggestButton" class="secondary-button" type="button">Gợi ý đáy HOSE</button>
+      <button id="runButton" type="button">Tai va luu JSON</button>
+    </div>
+
+    <div id="suggestModal" class="modal-overlay" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="suggestModalTitle">Gợi ý tạo đáy HOSE</h2>
+          <button id="suggestModalClose" type="button" class="modal-close">×</button>
+        </div>
+        <div id="suggestModalBody" class="modal-body">
+          <p id="suggestModalStatus">Đang quét...</p>
+          <div id="suggestModalResults" class="suggest-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="summary" class="summary">Chua chay.</div>
+    <div class="content-layout">
+      <div>
+        <div class="table-wrap">
+          <div id="hiddenColumnsBar" class="table-toolbar"></div>
+          <table id="mappingTable">
+            <thead id="mappingHead"></thead>
+            <tbody id="mappingBody">
+              <tr>
+                <td>Chua co du lieu mapping.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="detailPanel" class="detail-panel">
+        <h2 id="detailPanelTitle" class="detail-title">Chi tiet</h2>
+        <div id="detailContent">Click vao mot dong hoac o trong bang de xem chi tiet.</div>
+      </div>
+    </div>
+    <pre id="log" class="log"></pre>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+  <script>
+    (function() {
+      const TAB_STORAGE = 'investing-tab-state';
+      const DEFAULTS = { portfolio: { collapsed: false, height: 320 }, cash: { collapsed: false, height: 280 }, overview: { collapsed: false, height: 200 }, derivatives: { collapsed: false, height: 280 }, simDerivatives: { collapsed: false, height: 260 } };
+      function loadTabState() {
+        try {
+          const s = localStorage.getItem(TAB_STORAGE);
+          return s ? { ...DEFAULTS, ...JSON.parse(s) } : DEFAULTS;
+        } catch (_) { return DEFAULTS; }
+      }
+      function saveTabState(state) {
+        try { localStorage.setItem(TAB_STORAGE, JSON.stringify(state)); } catch (_) {}
+      }
+      let tabState = loadTabState();
+      function applyTabState() {
+        ['portfolio','cash','overview','derivatives','simDerivatives'].forEach(id => {
+          const tab = document.getElementById(id + 'Tab');
+          if (!tab) return;
+          const s = tabState[id] || DEFAULTS[id];
+          const body = tab.querySelector('.collapsible-tab-body');
+          const inner = tab.querySelector('.collapsible-tab-body-inner');
+          if (s.collapsed) tab.classList.add('collapsed');
+          else tab.classList.remove('collapsed');
+          if (inner) inner.style.maxHeight = s.collapsed ? 'none' : (s.height + 'px');
+        });
+      }
+      document.querySelectorAll('.collapsible-tab-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const tab = header.closest('.collapsible-tab');
+          const id = tab.dataset.tabId;
+          if (!id) return;
+          tabState[id] = tabState[id] || { ...DEFAULTS[id] };
+          tabState[id].collapsed = !tabState[id].collapsed;
+          saveTabState(tabState);
+          applyTabState();
+        });
+      });
+      document.querySelectorAll('.resize-handle').forEach(handle => {
+        handle.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const tab = handle.closest('.collapsible-tab');
+          const id = tab.dataset.tabId;
+          const inner = tab.querySelector('.collapsible-tab-body-inner');
+          if (!inner || !id) return;
+          const startY = e.clientY;
+          const startH = inner.getBoundingClientRect().height;
+          const minH = 80;
+          const maxH = 600;
+          function onMove(e) {
+            const dy = e.clientY - startY;
+            let h = Math.max(minH, Math.min(maxH, startH + dy));
+            inner.style.maxHeight = h + 'px';
+            tabState[id] = tabState[id] || { ...DEFAULTS[id] };
+            tabState[id].height = h;
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            saveTabState(tabState);
+          }
+          document.body.style.cursor = 'ns-resize';
+          document.body.style.userSelect = 'none';
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      });
+      applyTabState();
+    })();
+  </script>
+</body>
+</html>

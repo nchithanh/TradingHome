@@ -1,0 +1,19 @@
+{
+  "name": "investing",
+  "version": "1.0.0",
+  "description": "FireAnt stock investing tool",
+  "scripts": {
+    "start": "node server.js",
+    "ngrok": "node server.js --ngrok",
+    "dev": "node server.js --ngrok"
+  },
+  "dependencies": {
+    "ngrok": "^5.0.0-beta.2"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}
