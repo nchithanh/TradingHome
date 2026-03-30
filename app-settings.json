@@ -12,57 +12,10 @@
   "discordWebhookUrl": "https://discord.com/api/webhooks/1484031442446061599/-hTqRM1EQfvHclGJDs-gdRaEW0GINHV8ZJHymGsFs7kd-U-YXuTsAniXw-UtsbwkBpb7",
   "portfolioPositions": [
     {
-      "symbol": "VIC",
-      "price": 140283,
-      "quantity": 200,
-      "sellPrice": 128800
-    },
-    {
-      "symbol": "VIC",
-      "price": 140283,
-      "quantity": 50,
-      "sellPrice": 129500
-    },
-    {
-      "symbol": "VIC",
-      "price": 140283,
-      "quantity": 200,
-      "sellPrice": 129700
-    },
-    {
-      "symbol": "CEO",
-      "price": 15437,
-      "quantity": 600,
-      "sellPrice": 14600
-    },
-    {
-      "symbol": "HPG",
-      "price": 26923,
-      "quantity": 1300,
-      "sellPrice": 25650
-    },
-    {
-      "symbol": "NVL",
-      "price": 14350,
-      "quantity": 1000
-    },
-    {
-      "symbol": "OCB",
-      "price": 11200,
-      "quantity": 400,
+      "symbol": "VCG",
+      "price": 22150,
+      "quantity": 1200,
       "marginPct": 50
-    },
-    {
-      "symbol": "OCB",
-      "price": 11200,
-      "quantity": 1600,
-      "marginPct": 50
-    },
-    {
-      "symbol": "HPG",
-      "price": 25940,
-      "quantity": 400,
-      "sellPrice": 26060
     },
     {
       "symbol": "BSR",
@@ -78,9 +31,16 @@
       "sellPrice": 15600
     },
     {
-      "symbol": "NVL",
-      "price": 14100,
-      "quantity": 700
+      "symbol": "CEO",
+      "price": 15437,
+      "quantity": 600,
+      "sellPrice": 14600
+    },
+    {
+      "symbol": "HDG",
+      "price": 29195,
+      "quantity": 500,
+      "sellPrice": 30650
     },
     {
       "symbol": "HPG",
@@ -89,10 +49,41 @@
       "marginPct": 50
     },
     {
-      "symbol": "VIC",
-      "price": 127411,
-      "quantity": 85,
-      "sellPrice": 129700,
+      "symbol": "HPG",
+      "price": 25940,
+      "quantity": 400,
+      "sellPrice": 26060
+    },
+    {
+      "symbol": "HPG",
+      "price": 26923,
+      "quantity": 1300,
+      "sellPrice": 25650
+    },
+    {
+      "symbol": "NVL",
+      "price": 13250,
+      "quantity": 800
+    },
+    {
+      "symbol": "NVL",
+      "price": 13650,
+      "quantity": 1000
+    },
+    {
+      "symbol": "NVL",
+      "price": 14100,
+      "quantity": 700
+    },
+    {
+      "symbol": "NVL",
+      "price": 14350,
+      "quantity": 1000
+    },
+    {
+      "symbol": "OCB",
+      "price": 10800,
+      "quantity": 3000,
       "marginPct": 50
     },
     {
@@ -103,25 +94,47 @@
     },
     {
       "symbol": "OCB",
-      "price": 10800,
-      "quantity": 3000,
+      "price": 11200,
+      "quantity": 400,
       "marginPct": 50
     },
     {
-      "symbol": "NVL",
-      "price": 13650,
-      "quantity": 1000
+      "symbol": "OCB",
+      "price": 11200,
+      "quantity": 600,
+      "marginPct": 50
     },
     {
-      "symbol": "HDG",
-      "price": 29195,
-      "quantity": 500,
-      "sellPrice": 30650
+      "symbol": "OCB",
+      "price": 11200,
+      "quantity": 1000,
+      "sellPrice": 11050,
+      "marginPct": 50
     },
     {
-      "symbol": "NVL",
-      "price": 13250,
-      "quantity": 800
+      "symbol": "VIC",
+      "price": 127411,
+      "quantity": 85,
+      "sellPrice": 129700,
+      "marginPct": 50
+    },
+    {
+      "symbol": "VIC",
+      "price": 140283,
+      "quantity": 200,
+      "sellPrice": 129700
+    },
+    {
+      "symbol": "VIC",
+      "price": 140283,
+      "quantity": 50,
+      "sellPrice": 129500
+    },
+    {
+      "symbol": "VIC",
+      "price": 140283,
+      "quantity": 200,
+      "sellPrice": 128800
     }
   ],
   "cashTransactions": [
@@ -397,6 +410,12 @@
       "amount": 200000,
       "description": "bida",
       "createdAt": "2026-03-30T03:09:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 13290000,
+      "description": "mua VCG 1200 kiem trai lai",
+      "createdAt": "2026-03-30T06:35:00.000Z"
     }
   ],
   "derivativesOrders": [
@@ -430,6 +449,14 @@
       "quantity": 1,
       "entryPrice": 1000,
       "closePrice": 995,
+      "description": "-"
+    },
+    {
+      "symbol": "41I1G4000",
+      "type": "short",
+      "quantity": 1,
+      "entryPrice": 1000,
+      "closePrice": 1006,
       "description": "-"
     }
   ]

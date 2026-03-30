@@ -297,6 +297,7 @@
       portfolioColPrice: "Gi\xE1 v\u1ED1n",
       portfolioColQty: "SL",
       portfolioColTotal: "T\u1ED5ng v\u1ED1n",
+      portfolioColActualCapital: "T\u1ED5ng v\u1ED1n th\u1EF1c",
       portfolioColCurrentPrice: "Gi\xE1",
       portfolioColSellPrice: "Gi\xE1 b\xE1n",
       portfolioColMarginPct: "Margin %",
@@ -467,6 +468,7 @@
       portfolioColPrice: "\u4FA1\u683C",
       portfolioColQty: "\u6570\u91CF",
       portfolioColTotal: "\u5143\u672C\u5408\u8A08",
+      portfolioColActualCapital: "\u5B9F\u8CEA\u5143\u672C",
       portfolioColCurrentPrice: "\u73FE\u5728\u4FA1\u683C",
       portfolioColSellPrice: "\u58F2\u5374\u4FA1\u683C",
       portfolioColMarginPct: "Margin %",
@@ -637,6 +639,7 @@
       portfolioColPrice: "Price",
       portfolioColQty: "Qty",
       portfolioColTotal: "Cost total",
+      portfolioColActualCapital: "Effective capital",
       portfolioColCurrentPrice: "Current",
       portfolioColSellPrice: "Sell",
       portfolioColMarginPct: "Margin %",
@@ -807,6 +810,7 @@
       portfolioColPrice: "\u4EF7\u683C",
       portfolioColQty: "\u6570\u91CF",
       portfolioColTotal: "\u6210\u672C\u603B\u989D",
+      portfolioColActualCapital: "\u5B9E\u9645\u672C\u91D1",
       portfolioColCurrentPrice: "\u73B0\u4EF7",
       portfolioColSellPrice: "\u5356\u51FA\u4EF7",
       portfolioColMarginPct: "Margin %",
@@ -977,6 +981,7 @@
       portfolioColPrice: "\uAC00\uACA9",
       portfolioColQty: "\uC218\uB7C9",
       portfolioColTotal: "\uC6D0\uAE08 \uD569\uACC4",
+      portfolioColActualCapital: "\uC2E4\uC81C \uC99D\uAC70\uAE08",
       portfolioColCurrentPrice: "\uD604\uC7AC\uAC00",
       portfolioColSellPrice: "\uB9E4\uB3C4\uAC00",
       portfolioColMarginPct: "Margin %",
@@ -1091,6 +1096,7 @@
   var portfolioColPriceElement = document.querySelector("#portfolioColPrice");
   var portfolioColQtyElement = document.querySelector("#portfolioColQty");
   var portfolioColTotalElement = document.querySelector("#portfolioColTotal");
+  var portfolioColActualCapitalElement = document.querySelector("#portfolioColActualCapital");
   var portfolioColCurrentPriceElement = document.querySelector("#portfolioColCurrentPrice");
   var portfolioColSellPriceElement = document.querySelector("#portfolioColSellPrice");
   var portfolioColMarginPctElement = document.querySelector("#portfolioColMarginPct");
@@ -1478,6 +1484,7 @@
       <td><input class="portfolio-price" type="text" inputmode="numeric" placeholder="50.000" value="${pos.price > 0 ? formatAssetInput(pos.price) : ""}" data-portfolio-field /></td>
       <td><input class="portfolio-qty" type="text" inputmode="numeric" placeholder="100" value="${pos.quantity > 0 ? String(pos.quantity) : ""}" data-portfolio-field /></td>
       <td class="portfolio-total-cell"><span class="portfolio-row-total">${pos.price > 0 && pos.quantity > 0 ? formatAssetValue(pos.price * pos.quantity) : ""}</span></td>
+      <td class="portfolio-actual-capital-cell"><span class="portfolio-row-actual-capital">${pos.price > 0 && pos.quantity > 0 ? formatAssetValue(pos.marginPct === void 0 ? pos.price * pos.quantity : pos.price * pos.quantity * (pos.marginPct / 100)) : ""}</span></td>
       <td><span class="portfolio-row-current"></span></td>
       <td><input class="portfolio-sell-price" type="text" inputmode="numeric" placeholder="" value="${pos.sellPrice && pos.sellPrice > 0 ? formatAssetInput(pos.sellPrice) : ""}" data-portfolio-field /></td>
       <td><input class="portfolio-margin-pct" type="text" inputmode="numeric" placeholder="0" value="${pos.marginPct !== void 0 && pos.marginPct > 0 ? String(pos.marginPct) : ""}" data-portfolio-field style="width:50px;text-align:right" /></td>
@@ -1503,7 +1510,7 @@
         }
       });
     });
-    portfolioBodyElement.querySelectorAll("tr[data-portfolio-row]").forEach((row) => refreshPortfolioRowPnL(row));
+    portfolioBodyElement.querySelectorAll("tr[data-portfolio-row]").forEach((row) => refreshPortfolioRowTotal(row));
     refreshPortfolioTotal();
     if (portfolioSortState) {
       sortAndReorderRows(
@@ -1515,6 +1522,27 @@
       );
     }
   }
+  function refreshPortfolioRowActualCapital(row) {
+    if (!row) return;
+    const priceInput = row.querySelector(".portfolio-price");
+    const qtyInput = row.querySelector(".portfolio-qty");
+    const marginPctInput = row.querySelector(".portfolio-margin-pct");
+    const span = row.querySelector(".portfolio-row-actual-capital");
+    if (!span) return;
+    const price = parseAssetInput(priceInput?.value ?? "") ?? 0;
+    const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
+    const marginPct = parseMarginPct(marginPctInput?.value ?? "");
+    const total = price > 0 && qty > 0 ? price * qty : 0;
+    if (total <= 0) {
+      span.textContent = "";
+      return;
+    }
+    if (marginPct === void 0) {
+      span.textContent = formatAssetValue(total);
+    } else {
+      span.textContent = formatAssetValue(total * (marginPct / 100));
+    }
+  }
   function refreshPortfolioRowTotal(row) {
     if (!row) return;
     const priceInput = row.querySelector(".portfolio-price");
@@ -1524,6 +1552,7 @@
     const price = parseAssetInput(priceInput?.value ?? "") ?? 0;
     const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
     totalSpan.textContent = price > 0 && qty > 0 ? formatAssetValue(price * qty) : "";
+    refreshPortfolioRowActualCapital(row);
     refreshPortfolioRowPnL(row);
   }
   function refreshPortfolioRowPnL(row) {
@@ -1825,7 +1854,7 @@
     if (q && rows.length > 0 && visible === 0) {
       const tr = document.createElement("tr");
       tr.className = "tab-search-no-match";
-      tr.innerHTML = `<td colspan="10">${escapeHtml(t("tabSearchNoMatch"))}</td>`;
+      tr.innerHTML = `<td colspan="11">${escapeHtml(t("tabSearchNoMatch"))}</td>`;
       portfolioBodyElement.appendChild(tr);
     }
   }
@@ -2105,6 +2134,7 @@
     setSortableLabel(portfolioColPriceElement, t("portfolioColPrice"));
     setSortableLabel(portfolioColQtyElement, t("portfolioColQty"));
     setSortableLabel(portfolioColTotalElement, t("portfolioColTotal"));
+    setSortableLabel(portfolioColActualCapitalElement, t("portfolioColActualCapital"));
     setSortableLabel(portfolioColCurrentPriceElement, t("portfolioColCurrentPrice"));
     setSortableLabel(portfolioColSellPriceElement, t("portfolioColSellPrice"));
     setSortableLabel(portfolioColMarginPctElement, t("portfolioColMarginPct"));

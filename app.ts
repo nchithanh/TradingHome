@@ -277,6 +277,7 @@ const UI_TEXT = {
     portfolioColPrice: "Giá vốn",
     portfolioColQty: "SL",
     portfolioColTotal: "Tổng vốn",
+    portfolioColActualCapital: "Tổng vốn thực",
     portfolioColCurrentPrice: "Giá",
     portfolioColSellPrice: "Giá bán",
     portfolioColMarginPct: "Margin %",
@@ -450,6 +451,7 @@ const UI_TEXT = {
     portfolioColPrice: "価格",
     portfolioColQty: "数量",
     portfolioColTotal: "元本合計",
+    portfolioColActualCapital: "実質元本",
     portfolioColCurrentPrice: "現在価格",
     portfolioColSellPrice: "売却価格",
     portfolioColMarginPct: "Margin %",
@@ -622,6 +624,7 @@ const UI_TEXT = {
     portfolioColPrice: "Price",
     portfolioColQty: "Qty",
     portfolioColTotal: "Cost total",
+    portfolioColActualCapital: "Effective capital",
     portfolioColCurrentPrice: "Current",
     portfolioColSellPrice: "Sell",
     portfolioColMarginPct: "Margin %",
@@ -795,6 +798,7 @@ const UI_TEXT = {
     portfolioColPrice: "价格",
     portfolioColQty: "数量",
     portfolioColTotal: "成本总额",
+    portfolioColActualCapital: "实际本金",
     portfolioColCurrentPrice: "现价",
     portfolioColSellPrice: "卖出价",
     portfolioColMarginPct: "Margin %",
@@ -967,6 +971,7 @@ const UI_TEXT = {
     portfolioColPrice: "가격",
     portfolioColQty: "수량",
     portfolioColTotal: "원금 합계",
+    portfolioColActualCapital: "실제 증거금",
     portfolioColCurrentPrice: "현재가",
     portfolioColSellPrice: "매도가",
     portfolioColMarginPct: "Margin %",
@@ -1082,6 +1087,7 @@ const portfolioColSymbolElement = document.querySelector<HTMLElement>("#portfoli
 const portfolioColPriceElement = document.querySelector<HTMLElement>("#portfolioColPrice");
 const portfolioColQtyElement = document.querySelector<HTMLElement>("#portfolioColQty");
 const portfolioColTotalElement = document.querySelector<HTMLElement>("#portfolioColTotal");
+const portfolioColActualCapitalElement = document.querySelector<HTMLElement>("#portfolioColActualCapital");
 const portfolioColCurrentPriceElement = document.querySelector<HTMLElement>("#portfolioColCurrentPrice");
 const portfolioColSellPriceElement = document.querySelector<HTMLElement>("#portfolioColSellPrice");
 const portfolioColMarginPctElement = document.querySelector<HTMLElement>("#portfolioColMarginPct");
@@ -1561,6 +1567,7 @@ function renderPortfolioRows(positions: PortfolioPosition[]): void {
       <td><input class="portfolio-price" type="text" inputmode="numeric" placeholder="50.000" value="${pos.price > 0 ? formatAssetInput(pos.price) : ""}" data-portfolio-field /></td>
       <td><input class="portfolio-qty" type="text" inputmode="numeric" placeholder="100" value="${pos.quantity > 0 ? String(pos.quantity) : ""}" data-portfolio-field /></td>
       <td class="portfolio-total-cell"><span class="portfolio-row-total">${pos.price > 0 && pos.quantity > 0 ? formatAssetValue(pos.price * pos.quantity) : ""}</span></td>
+      <td class="portfolio-actual-capital-cell"><span class="portfolio-row-actual-capital">${pos.price > 0 && pos.quantity > 0 ? formatAssetValue(pos.marginPct === undefined ? pos.price * pos.quantity : pos.price * pos.quantity * (pos.marginPct / 100)) : ""}</span></td>
       <td><span class="portfolio-row-current"></span></td>
       <td><input class="portfolio-sell-price" type="text" inputmode="numeric" placeholder="" value="${pos.sellPrice && pos.sellPrice > 0 ? formatAssetInput(pos.sellPrice) : ""}" data-portfolio-field /></td>
       <td><input class="portfolio-margin-pct" type="text" inputmode="numeric" placeholder="0" value="${pos.marginPct !== undefined && pos.marginPct > 0 ? String(pos.marginPct) : ""}" data-portfolio-field style="width:50px;text-align:right" /></td>
@@ -1587,7 +1594,7 @@ function renderPortfolioRows(positions: PortfolioPosition[]): void {
       }
     });
   });
-  portfolioBodyElement.querySelectorAll("tr[data-portfolio-row]").forEach((row) => refreshPortfolioRowPnL(row));
+  portfolioBodyElement.querySelectorAll("tr[data-portfolio-row]").forEach((row) => refreshPortfolioRowTotal(row));
   refreshPortfolioTotal();
   if (portfolioSortState) {
     sortAndReorderRows(
@@ -1600,6 +1607,28 @@ function renderPortfolioRows(positions: PortfolioPosition[]): void {
   }
 }
 
+function refreshPortfolioRowActualCapital(row: Element | null): void {
+  if (!row) return;
+  const priceInput = row.querySelector<HTMLInputElement>(".portfolio-price");
+  const qtyInput = row.querySelector<HTMLInputElement>(".portfolio-qty");
+  const marginPctInput = row.querySelector<HTMLInputElement>(".portfolio-margin-pct");
+  const span = row.querySelector<HTMLSpanElement>(".portfolio-row-actual-capital");
+  if (!span) return;
+  const price = parseAssetInput(priceInput?.value ?? "") ?? 0;
+  const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
+  const marginPct = parseMarginPct(marginPctInput?.value ?? "");
+  const total = price > 0 && qty > 0 ? price * qty : 0;
+  if (total <= 0) {
+    span.textContent = "";
+    return;
+  }
+  if (marginPct === undefined) {
+    span.textContent = formatAssetValue(total);
+  } else {
+    span.textContent = formatAssetValue(total * (marginPct / 100));
+  }
+}
+
 function refreshPortfolioRowTotal(row: Element | null): void {
   if (!row) return;
   const priceInput = row.querySelector<HTMLInputElement>(".portfolio-price");
@@ -1609,6 +1638,7 @@ function refreshPortfolioRowTotal(row: Element | null): void {
   const price = parseAssetInput(priceInput?.value ?? "") ?? 0;
   const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
   totalSpan.textContent = price > 0 && qty > 0 ? formatAssetValue(price * qty) : "";
+  refreshPortfolioRowActualCapital(row);
   refreshPortfolioRowPnL(row);
 }
 
@@ -1940,7 +1970,7 @@ function applyPortfolioTabSearch(): void {
   if (q && rows.length > 0 && visible === 0) {
     const tr = document.createElement("tr");
     tr.className = "tab-search-no-match";
-    tr.innerHTML = `<td colspan="10">${escapeHtml(t("tabSearchNoMatch"))}</td>`;
+    tr.innerHTML = `<td colspan="11">${escapeHtml(t("tabSearchNoMatch"))}</td>`;
     portfolioBodyElement.appendChild(tr);
   }
 }
@@ -2277,6 +2307,7 @@ function applyStaticTranslations(): void {
   setSortableLabel(portfolioColPriceElement, t("portfolioColPrice"));
   setSortableLabel(portfolioColQtyElement, t("portfolioColQty"));
   setSortableLabel(portfolioColTotalElement, t("portfolioColTotal"));
+  setSortableLabel(portfolioColActualCapitalElement, t("portfolioColActualCapital"));
   setSortableLabel(portfolioColCurrentPriceElement, t("portfolioColCurrentPrice"));
   setSortableLabel(portfolioColSellPriceElement, t("portfolioColSellPrice"));
   setSortableLabel(portfolioColMarginPctElement, t("portfolioColMarginPct"));
