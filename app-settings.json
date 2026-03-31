@@ -3,7 +3,7 @@
   "language": "vi",
   "symbols": "VN30, VN30F1M, VIC, OCB, VCG, PNJ, KHG",
   "startDate": "2026-01-01",
-  "endDate": "2026-03-30",
+  "endDate": "2026-03-31",
   "notifyEnabled": true,
   "notifyOnHedgeChange": true,
   "notifyOnBuySignal": true,
