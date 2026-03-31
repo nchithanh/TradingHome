@@ -1,7 +1,7 @@
 {
   "token": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoyMDcxOTg3MzM3LCJuYmYiOjE3NzE5ODczMzcsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI4NTMyMGFiMC02YzM5LTQ2MjAtODE3My1hZDllMTU5ZjE4ZjIiLCJhdXRoX3RpbWUiOjE3NzE5ODczMzcsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJuY2hpdGhhbmg5OTk5QGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiM2ZmZGViMDAtY2E3My00NjcxLThkZDItNzY4MzU3N2Y0MGY0IiwianRpIjoiOGI4ZDg5YjI2YTllYTU0Njk0OTg2NjMzYjc1M2UyYTgiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.YypqGdUD63c3pIQB98oyIYNSYRc5uMDgPvtf6sasaN64_Zx1SRQBGLMGfTHAK1n_nnsw6jNNumAAdZjksvfeYrf3hBT7RApZU3nhrGiWf9OJPMTtGcKqz-jjj-rtUIphG1O6f77IXp5xt47EmFOzw_7iUyir8GaPhhNNT-bMTJ6dfEquUL6jBMWINNUOwYszkYw3F498-FC02Oz3wq2hUwB4SdRiZQrkIx__oCzcc8p-dkqxk5R123OGxklXbEhCFn1GEXN7s0N4IaxdPmDsWrl9kFPYH9mCRerMYmJHiA-xzy9k1FtVrlOsPFO2-VrbsQDjDGpv7jNW3WduyoV_DA",
   "language": "vi",
-  "symbols": "VN30, VN30F1M, VIC, OCB, NVL, BSR,HPG, VCG",
+  "symbols": "VN30, VN30F1M, VIC, OCB, VCG, PNJ, KHG",
   "startDate": "2026-01-01",
   "endDate": "2026-03-30",
   "notifyEnabled": true,
@@ -11,12 +11,6 @@
   "telegramChatId": "",
   "discordWebhookUrl": "https://discord.com/api/webhooks/1484031442446061599/-hTqRM1EQfvHclGJDs-gdRaEW0GINHV8ZJHymGsFs7kd-U-YXuTsAniXw-UtsbwkBpb7",
   "portfolioPositions": [
-    {
-      "symbol": "VCG",
-      "price": 22150,
-      "quantity": 1200,
-      "marginPct": 50
-    },
     {
       "symbol": "BSR",
       "price": 27300,
@@ -46,6 +40,7 @@
       "symbol": "HPG",
       "price": 26100,
       "quantity": 1200,
+      "sellPrice": 27050,
       "marginPct": 50
     },
     {
@@ -63,22 +58,26 @@
     {
       "symbol": "NVL",
       "price": 13250,
-      "quantity": 800
+      "quantity": 800,
+      "sellPrice": 13850
     },
     {
       "symbol": "NVL",
       "price": 13650,
-      "quantity": 1000
+      "quantity": 1000,
+      "sellPrice": 14000
     },
     {
       "symbol": "NVL",
       "price": 14100,
-      "quantity": 700
+      "quantity": 700,
+      "sellPrice": 13850
     },
     {
       "symbol": "NVL",
       "price": 14350,
-      "quantity": 1000
+      "quantity": 1000,
+      "sellPrice": 13850
     },
     {
       "symbol": "OCB",
@@ -95,13 +94,7 @@
     {
       "symbol": "OCB",
       "price": 11200,
-      "quantity": 400,
-      "marginPct": 50
-    },
-    {
-      "symbol": "OCB",
-      "price": 11200,
-      "quantity": 600,
+      "quantity": 1000,
       "marginPct": 50
     },
     {
@@ -135,6 +128,36 @@
       "price": 140283,
       "quantity": 200,
       "sellPrice": 128800
+    },
+    {
+      "symbol": "PNJ",
+      "price": 108700,
+      "quantity": 200,
+      "marginPct": 50
+    },
+    {
+      "symbol": "KHG",
+      "price": 5524,
+      "quantity": 4000,
+      "marginPct": 30
+    },
+    {
+      "symbol": "VIC",
+      "price": 131922,
+      "quantity": 100,
+      "marginPct": 50
+    },
+    {
+      "symbol": "VCG",
+      "price": 22500,
+      "quantity": 1000,
+      "marginPct": 50
+    },
+    {
+      "symbol": "VCG",
+      "price": 22200,
+      "quantity": 1200,
+      "marginPct": 50
     }
   ],
   "cashTransactions": [
@@ -413,9 +436,57 @@
     },
     {
       "type": "withdrawal",
-      "amount": 13290000,
-      "description": "mua VCG 1200 kiem trai lai",
-      "createdAt": "2026-03-30T06:35:00.000Z"
+      "amount": 10870000,
+      "description": "mua PNJ 200",
+      "createdAt": "2026-03-31T06:51:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 6628800,
+      "description": "mua KHG 4000",
+      "createdAt": "2026-03-31T06:51:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 6580000,
+      "description": "mua VIC 100",
+      "createdAt": "2026-03-31T06:52:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 11250000,
+      "description": "mua VCG 1000",
+      "createdAt": "2026-03-31T06:53:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 13320000,
+      "description": "mua VCG 1200",
+      "createdAt": "2026-03-30T06:57:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 30000,
+      "description": "cafe chất",
+      "createdAt": "2026-03-30T07:53:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 180000,
+      "description": "vịt quay",
+      "createdAt": "2026-03-30T07:53:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 30000,
+      "description": "ht coffer",
+      "createdAt": "2026-03-30T07:53:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 30000,
+      "description": "cơm trưa",
+      "createdAt": "2026-03-30T07:54:00.000Z"
     }
   ],
   "derivativesOrders": [
@@ -458,6 +529,14 @@
       "entryPrice": 1000,
       "closePrice": 1006,
       "description": "-"
+    },
+    {
+      "symbol": "41I1G4000",
+      "type": "short",
+      "quantity": 1,
+      "entryPrice": 1000,
+      "closePrice": 1006,
+      "description": "Short không theo tư duy"
     }
   ]
 }

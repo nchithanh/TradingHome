@@ -1555,11 +1555,26 @@
     refreshPortfolioRowActualCapital(row);
     refreshPortfolioRowPnL(row);
   }
+  function setPortfolioRowInputsLocked(tr, locked) {
+    if (!tr) return;
+    tr.querySelectorAll(
+      ".portfolio-symbol, .portfolio-price, .portfolio-qty, .portfolio-margin-pct"
+    ).forEach((el) => {
+      el.readOnly = locked;
+    });
+    const sellEl = tr.querySelector(".portfolio-sell-price");
+    if (sellEl) sellEl.readOnly = false;
+  }
   function refreshPortfolioRowPnL(row) {
     const symbolInput = row.querySelector(".portfolio-symbol");
     const priceInput = row.querySelector(".portfolio-price");
     const qtyInput = row.querySelector(".portfolio-qty");
     const sellPriceInput = row.querySelector(".portfolio-sell-price");
+    const sellPrice = sellPriceInput?.value ? parseAssetInput(sellPriceInput.value) ?? void 0 : void 0;
+    const hasSellPrice = sellPrice !== void 0 && sellPrice > 0;
+    const tr = row instanceof HTMLTableRowElement ? row : row.closest("tr");
+    tr?.classList.toggle("portfolio-row-has-sell-price", hasSellPrice);
+    setPortfolioRowInputsLocked(tr, hasSellPrice);
     const currentSpan = row.querySelector(".portfolio-row-current");
     const pnlSpan = row.querySelector(".portfolio-row-pnl");
     const pnlPctSpan = row.querySelector(".portfolio-row-pnlpct");
@@ -1567,8 +1582,6 @@
     const symbol = (symbolInput?.value ?? "").trim().toUpperCase();
     const costPrice = parseAssetInput(priceInput?.value ?? "") ?? 0;
     const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
-    const sellPrice = sellPriceInput?.value ? parseAssetInput(sellPriceInput.value) ?? void 0 : void 0;
-    const tr = row instanceof HTMLTableRowElement ? row : row.closest("tr");
     tr?.classList.remove("portfolio-row-profit", "portfolio-row-loss");
     if (!symbol || costPrice <= 0 || qty <= 0) {
       currentSpan.textContent = "";
@@ -1577,7 +1590,7 @@
       return;
     }
     const currentPrice = getLatestCloseForSymbol(symbol);
-    const priceForPnL = sellPrice !== void 0 && sellPrice > 0 ? sellPrice : currentPrice ?? null;
+    const priceForPnL = hasSellPrice ? sellPrice : currentPrice ?? null;
     if (priceForPnL === null) {
       currentSpan.textContent = "-";
       pnlSpan.textContent = "-";

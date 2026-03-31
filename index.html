@@ -588,6 +588,23 @@
     .portfolio-table .portfolio-del-btn { padding: 4px 10px; font-size: 12px; }
     .portfolio-table tr.portfolio-row-profit { border-left: 3px solid rgba(38, 166, 154, 0.5); }
     .portfolio-table tr.portfolio-row-loss { border-left: 3px solid rgba(242, 54, 69, 0.5); }
+    /* Dòng đã nhập giá bán: chữ mờ hơn (input giữ độ tương phản) */
+    .portfolio-table tr.portfolio-row-has-sell-price td {
+      color: var(--tv-text-secondary);
+      opacity: 0.6;
+    }
+    .portfolio-table tr.portfolio-row-has-sell-price td:has(.portfolio-sell-price),
+    .portfolio-table tr.portfolio-row-has-sell-price td:has(.portfolio-del-btn) {
+      opacity: 1;
+    }
+    .portfolio-table tr.portfolio-row-has-sell-price td input,
+    .portfolio-table tr.portfolio-row-has-sell-price td span.positive,
+    .portfolio-table tr.portfolio-row-has-sell-price td span.negative {
+      color: var(--tv-text);
+    }
+    .portfolio-table tr.portfolio-row-has-sell-price td.portfolio-total-cell {
+      color: var(--tv-green);
+    }
     .portfolio-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .portfolio-summary { color: var(--tv-text-secondary); font-size: 13px; }
     .portfolio-summary strong { color: var(--tv-text); }

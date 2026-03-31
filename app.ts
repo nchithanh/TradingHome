@@ -1642,11 +1642,27 @@ function refreshPortfolioRowTotal(row: Element | null): void {
   refreshPortfolioRowPnL(row);
 }
 
+function setPortfolioRowInputsLocked(tr: HTMLTableRowElement | null | undefined, locked: boolean): void {
+  if (!tr) return;
+  tr.querySelectorAll<HTMLInputElement>(
+    ".portfolio-symbol, .portfolio-price, .portfolio-qty, .portfolio-margin-pct"
+  ).forEach((el) => {
+    el.readOnly = locked;
+  });
+  const sellEl = tr.querySelector<HTMLInputElement>(".portfolio-sell-price");
+  if (sellEl) sellEl.readOnly = false;
+}
+
 function refreshPortfolioRowPnL(row: Element): void {
   const symbolInput = row.querySelector<HTMLInputElement>(".portfolio-symbol");
   const priceInput = row.querySelector<HTMLInputElement>(".portfolio-price");
   const qtyInput = row.querySelector<HTMLInputElement>(".portfolio-qty");
   const sellPriceInput = row.querySelector<HTMLInputElement>(".portfolio-sell-price");
+  const sellPrice = sellPriceInput?.value ? (parseAssetInput(sellPriceInput.value) ?? undefined) : undefined;
+  const hasSellPrice = sellPrice !== undefined && sellPrice > 0;
+  const tr = row instanceof HTMLTableRowElement ? row : row.closest("tr");
+  tr?.classList.toggle("portfolio-row-has-sell-price", hasSellPrice);
+  setPortfolioRowInputsLocked(tr, hasSellPrice);
   const currentSpan = row.querySelector<HTMLSpanElement>(".portfolio-row-current");
   const pnlSpan = row.querySelector<HTMLSpanElement>(".portfolio-row-pnl");
   const pnlPctSpan = row.querySelector<HTMLSpanElement>(".portfolio-row-pnlpct");
@@ -1654,8 +1670,6 @@ function refreshPortfolioRowPnL(row: Element): void {
   const symbol = (symbolInput?.value ?? "").trim().toUpperCase();
   const costPrice = parseAssetInput(priceInput?.value ?? "") ?? 0;
   const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
-  const sellPrice = sellPriceInput?.value ? (parseAssetInput(sellPriceInput.value) ?? undefined) : undefined;
-  const tr = row instanceof HTMLTableRowElement ? row : row.closest("tr");
   tr?.classList.remove("portfolio-row-profit", "portfolio-row-loss");
   if (!symbol || costPrice <= 0 || qty <= 0) {
     currentSpan.textContent = "";
@@ -1664,7 +1678,7 @@ function refreshPortfolioRowPnL(row: Element): void {
     return;
   }
   const currentPrice = getLatestCloseForSymbol(symbol);
-  const priceForPnL = sellPrice !== undefined && sellPrice > 0 ? sellPrice : (currentPrice ?? null);
+  const priceForPnL = hasSellPrice ? sellPrice! : (currentPrice ?? null);
   if (priceForPnL === null) {
     currentSpan.textContent = "-";
     pnlSpan.textContent = "-";
