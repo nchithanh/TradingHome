@@ -6,6 +6,8 @@ const PORT = 5500;
 const USE_NGROK = process.argv.includes("--ngrok");
 const ROOT_DIR = __dirname;
 const SETTINGS_FILE_PATH = path.join(ROOT_DIR, "app-settings.json");
+const OVERVIEW_FILE_PATH = path.join(ROOT_DIR, "overview.json");
+const OVERVIEW_MAX_ENTRIES = 5000;
 
 const CONTENT_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -92,6 +94,49 @@ const server = http.createServer((request, response) => {
     }
 
     sendJson(response, 405, { error: "Method not allowed." });
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/overview-append" && request.method === "POST") {
+    let body = "";
+    request.on("data", (chunk) => {
+      body += chunk;
+    });
+    request.on("end", () => {
+      try {
+        const entry = body ? JSON.parse(body) : null;
+        if (!entry || typeof entry !== "object") {
+          sendJson(response, 400, { error: "Invalid JSON body." });
+          return;
+        }
+        fs.readFile(OVERVIEW_FILE_PATH, "utf8", (readErr, content) => {
+          let doc = { version: 1, entries: [] };
+          if (!readErr && content) {
+            try {
+              const parsed = JSON.parse(content);
+              if (parsed && Array.isArray(parsed.entries)) {
+                doc = { version: typeof parsed.version === "number" ? parsed.version : 1, entries: parsed.entries };
+              }
+            } catch {
+              doc = { version: 1, entries: [] };
+            }
+          }
+          doc.entries.push(entry);
+          if (doc.entries.length > OVERVIEW_MAX_ENTRIES) {
+            doc.entries = doc.entries.slice(-OVERVIEW_MAX_ENTRIES);
+          }
+          fs.writeFile(OVERVIEW_FILE_PATH, `${JSON.stringify(doc, null, 2)}\n`, "utf8", (writeErr) => {
+            if (writeErr) {
+              sendJson(response, 500, { error: "Failed to write overview.json." });
+              return;
+            }
+            sendJson(response, 200, { ok: true, count: doc.entries.length });
+          });
+        });
+      } catch {
+        sendJson(response, 400, { error: "Invalid JSON." });
+      }
+    });
     return;
   }
 

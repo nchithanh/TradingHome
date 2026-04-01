@@ -150,6 +150,7 @@ const LANGUAGE_STORAGE_KEY = "fireant-language";
 const APP_SETTINGS_API_PATH = "/api/settings";
 const SIM_DERIV_MANUAL_STORAGE_KEY = "investing-sim-derivatives-manual-v2";
 const NOTIFY_API_PATH = "/api/notify";
+const OVERVIEW_APPEND_API_PATH = "/api/overview-append";
 const FUTURES_POINT_VALUE = 100_000;
 const FUTURES_MARGIN_PER_CONTRACT = 10_000_000;
 
@@ -1152,6 +1153,8 @@ type TabSortState = { col: number; direction: "asc" | "desc" };
 let portfolioSortState: TabSortState | null = null;
 let cashSortState: TabSortState | null = null;
 let derivativesSortState: TabSortState | null = null;
+let overviewSnapshotTimer: ReturnType<typeof setTimeout> | null = null;
+let lastOverviewSnapshotJson = "";
 let currentDetailState: { date: string | null; symbol: string | null } = { date: null, symbol: null };
 let pipWindowRef: Window | null = null;
 let pipRootElement: HTMLDivElement | null = null;
@@ -1697,9 +1700,18 @@ function refreshPortfolioRowPnL(row: Element): void {
   else if (pnl < 0) tr?.classList.add("portfolio-row-loss");
 }
 
-function refreshPortfolioTotal(): void {
-  applyPortfolioTabSearch();
-  let totalCost = 0;
+function computePortfolioTabTotals(): {
+  /** Giá vốn × SL (danh nghĩa) — dùng cho P/L tuyệt đối */
+  totalCostNotional: number;
+  /** Tiền vốn thực bỏ ra: không margin = notional; có margin = notional × margin% */
+  totalCostEffective: number;
+  totalCurrent: number;
+  totalDebt: number;
+  totalPnL: number;
+  totalPnLPct: number | null;
+} {
+  let totalCostNotional = 0;
+  let totalCostEffective = 0;
   let totalCurrent = 0;
   portfolioBodyElement?.querySelectorAll("tr[data-portfolio-row]").forEach((row) => {
     if (row.classList.contains("hidden-by-tab-search")) return;
@@ -1707,12 +1719,16 @@ function refreshPortfolioTotal(): void {
     const priceInput = row.querySelector<HTMLInputElement>(".portfolio-price");
     const qtyInput = row.querySelector<HTMLInputElement>(".portfolio-qty");
     const sellPriceInput = row.querySelector<HTMLInputElement>(".portfolio-sell-price");
+    const marginPctInput = row.querySelector<HTMLInputElement>(".portfolio-margin-pct");
     const symbol = (symbolInput?.value ?? "").trim().toUpperCase();
     const costPrice = parseAssetInput(priceInput?.value ?? "") ?? 0;
     const qty = parseInt(String(qtyInput?.value ?? "0").replace(/\D/g, ""), 10) || 0;
     const sellPrice = sellPriceInput?.value ? (parseAssetInput(sellPriceInput.value) ?? undefined) : undefined;
+    const marginPct = parseMarginPct(marginPctInput?.value ?? "");
     if (costPrice > 0 && qty > 0) {
-      totalCost += costPrice * qty;
+      const gross = costPrice * qty;
+      totalCostNotional += gross;
+      totalCostEffective += marginPct === undefined ? gross : gross * (marginPct / 100);
       const priceForValue =
         sellPrice !== undefined && sellPrice > 0
           ? sellPrice
@@ -1720,8 +1736,13 @@ function refreshPortfolioTotal(): void {
       totalCurrent += priceForValue !== null ? priceForValue * qty : 0;
     }
   });
-  const totalPnL = totalCurrent - totalCost;
-  const totalPnLPct = totalCost > 0 ? (totalPnL / totalCost) * 100 : null;
+  const totalPnL = totalCurrent - totalCostNotional;
+  const totalPnLPct =
+    totalCostEffective > 0
+      ? (totalPnL / totalCostEffective) * 100
+      : totalCostNotional > 0
+        ? (totalPnL / totalCostNotional) * 100
+        : null;
   let totalDebt = 0;
   portfolioBodyElement?.querySelectorAll("tr[data-portfolio-row]").forEach((row) => {
     if (row.classList.contains("hidden-by-tab-search")) return;
@@ -1744,16 +1765,42 @@ function refreshPortfolioTotal(): void {
       totalDebt += rowValue * (marginPct / 100);
     }
   });
-  if (portfolioTotalValueElement) portfolioTotalValueElement.textContent = formatAssetValue(totalCost);
-  if (portfolioCurrentValueElement)
+  return { totalCostNotional, totalCostEffective, totalCurrent, totalDebt, totalPnL, totalPnLPct };
+}
+
+function refreshPortfolioTotal(): void {
+  applyPortfolioTabSearch();
+  const { totalCostNotional, totalCostEffective, totalCurrent, totalDebt, totalPnL, totalPnLPct } =
+    computePortfolioTabTotals();
+  if (portfolioTotalValueElement) {
+    portfolioTotalValueElement.textContent = formatAssetValue(totalCostEffective);
+    portfolioTotalValueElement.className = "";
+  }
+  if (portfolioCurrentValueElement) {
     portfolioCurrentValueElement.textContent =
-      totalCost > 0 && totalCurrent === 0 ? "-" : formatAssetValue(totalCurrent || totalCost);
-  if (portfolioDebtValueElement) portfolioDebtValueElement.textContent = formatAssetValue(totalDebt);
+      totalCostNotional > 0 && totalCurrent === 0
+        ? "-"
+        : formatAssetValue(totalCurrent || totalCostNotional);
+    if (totalCostNotional > 0 && totalCurrent > 0) {
+      portfolioCurrentValueElement.className =
+        totalCurrent > totalCostNotional
+          ? "positive"
+          : totalCurrent < totalCostNotional
+            ? "negative"
+            : "";
+    } else {
+      portfolioCurrentValueElement.className = "";
+    }
+  }
+  if (portfolioDebtValueElement) {
+    portfolioDebtValueElement.textContent = formatAssetValue(totalDebt);
+    portfolioDebtValueElement.className = totalDebt > 0 ? "negative" : "";
+  }
   if (portfolioPnLValueElement) {
-    if (totalCost > 0 && totalCurrent === 0) {
+    if (totalCostNotional > 0 && totalCurrent === 0) {
       portfolioPnLValueElement.textContent = "-";
       portfolioPnLValueElement.className = "";
-    } else if (totalCost > 0) {
+    } else if (totalCostNotional > 0) {
       portfolioPnLValueElement.textContent =
         `${formatAssetValue(totalPnL)}${totalPnLPct !== null ? ` (${totalPnLPct >= 0 ? "+" : ""}${totalPnLPct.toFixed(2)}%)` : ""}`;
       portfolioPnLValueElement.className = totalPnL > 0 ? "positive" : totalPnL < 0 ? "negative" : "";
@@ -2047,7 +2094,83 @@ function applyDerivativesTabSearch(): void {
   }
 }
 
-function refreshOverviewHeader(): void {
+function scheduleOverviewSnapshot(): void {
+  if (overviewSnapshotTimer !== null) window.clearTimeout(overviewSnapshotTimer);
+  overviewSnapshotTimer = window.setTimeout(() => {
+    overviewSnapshotTimer = null;
+    void persistOverviewSnapshot();
+  }, 1200);
+}
+
+function collectOverviewDisplaySnapshot(): Record<string, string> {
+  return {
+    headerInitial: overviewHeaderInitialAssetValueElement?.textContent?.trim() ?? "",
+    headerPnL: overviewHeaderPnLValueElement?.textContent?.trim() ?? "",
+    headerNetAsset: overviewHeaderNetAssetValueElement?.textContent?.trim() ?? "",
+    overviewVn30: overviewVn30ValueElement?.textContent?.trim() ?? "",
+    overviewVn30Sub: overviewVn30SubtextElement?.textContent?.trim() ?? "",
+    overviewFutures: overviewFuturesValueElement?.textContent?.trim() ?? "",
+    overviewFuturesSub: overviewFuturesSubtextElement?.textContent?.trim() ?? "",
+    overviewTotal: overviewTotalValueElement?.textContent?.trim() ?? "",
+    overviewTotalSub: overviewTotalSubtextElement?.textContent?.trim() ?? "",
+    portfolioTotalCost: portfolioTotalValueElement?.textContent?.trim() ?? "",
+    portfolioCurrent: portfolioCurrentValueElement?.textContent?.trim() ?? "",
+    portfolioPnL: portfolioPnLValueElement?.textContent?.trim() ?? "",
+    portfolioDebt: portfolioDebtValueElement?.textContent?.trim() ?? "",
+    cashTotal: cashTotalValueElement?.textContent?.trim() ?? "",
+    derivativesCount: derivativesTotalValueElement?.textContent?.trim() ?? "",
+    derivativesPnLTotal: derivativesPnLValueElement?.textContent?.trim() ?? ""
+  };
+}
+
+async function persistOverviewSnapshot(): Promise<void> {
+  try {
+    const header = computeHeaderMetrics();
+    const grid = computeOverviewTabMetrics();
+    const portfolio = computePortfolioTabTotals();
+    const derivativesOrderCount =
+      derivativesBodyElement?.querySelectorAll("tr[data-derivatives-row]").length ?? 0;
+    const display = collectOverviewDisplaySnapshot();
+    const headerWithInitial = {
+      ...header,
+      initialAsset: header.netAsset - header.pnl
+    };
+    const dedupKey = JSON.stringify({
+      header: headerWithInitial,
+      overviewGrid: grid,
+      portfolioTab: portfolio,
+      derivativesOrderCount
+    });
+    if (dedupKey === lastOverviewSnapshotJson) return;
+    lastOverviewSnapshotJson = dedupKey;
+    const entry = {
+      at: new Date().toISOString(),
+      header: headerWithInitial,
+      overviewGrid: grid,
+      portfolioTab: portfolio,
+      derivativesOrderCount,
+      display
+    };
+    const res = await fetch(OVERVIEW_APPEND_API_PATH, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entry)
+    });
+    if (!res.ok) lastOverviewSnapshotJson = "";
+  } catch {
+    lastOverviewSnapshotJson = "";
+  }
+}
+
+function computeHeaderMetrics(): {
+  portfolioCost: number;
+  portfolioCurrent: number;
+  cashTotal: number;
+  totalDebt: number;
+  derivativesPnL: number;
+  pnl: number;
+  netAsset: number;
+} {
   let portfolioCost = 0;
   let portfolioCurrent = 0;
   let cashTotal = 0;
@@ -2120,6 +2243,12 @@ function refreshOverviewHeader(): void {
   });
   const pnl = portfolioCurrent - portfolioCost + derivativesPnL;
   const netAsset = portfolioCurrent + cashTotal - totalDebt + derivativesPnL;
+  return { portfolioCost, portfolioCurrent, cashTotal, totalDebt, derivativesPnL, pnl, netAsset };
+}
+
+function refreshOverviewHeader(): void {
+  const { portfolioCost, portfolioCurrent, cashTotal, totalDebt, derivativesPnL, pnl, netAsset } =
+    computeHeaderMetrics();
   if (overviewHeaderInitialAssetLabelElement) overviewHeaderInitialAssetLabelElement.textContent = t("overviewHeaderInitialAssetLabel");
   if (overviewHeaderInitialAssetValueElement) {
     overviewHeaderInitialAssetValueElement.textContent =
@@ -2137,6 +2266,7 @@ function refreshOverviewHeader(): void {
       portfolioCost > 0 && portfolioCurrent === 0 && cashTotal === 0 ? "-" : formatAssetValue(netAsset);
     overviewHeaderNetAssetValueElement.className = "overview-header-value";
   }
+  scheduleOverviewSnapshot();
 }
 
 function getComparisonClass(currentValue: number | null, baseValue: number | null): string {
@@ -2145,6 +2275,52 @@ function getComparisonClass(currentValue: number | null, baseValue: number | nul
   }
 
   return currentValue > baseValue ? "positive" : "negative";
+}
+
+function computeOverviewTabMetrics():
+  | {
+      vn30Value: number | null;
+      vn30BaseAsset: number | null;
+      vn30f1mValue: number | null;
+      totalBaseAsset: number;
+      totalAsset: number | null;
+      totalPnLGrid: number | null;
+      futuresBaseMargin: number | null;
+      futuresPnL: number | null;
+      appliedDate: string;
+    }
+  | null {
+  if (Object.keys(currentMappingData).length === 0) return null;
+  const rows = buildMappingRows(currentMappingData);
+  const latestRow = rows[0] ?? null;
+  const configuredAssets = getConfiguredAssetInputs();
+  const vn30BaseAsset = configuredAssets.VN30 ?? null;
+  const totalBaseAsset = (configuredAssets.VN30 ?? 0) + FUTURES_MARGIN_PER_CONTRACT;
+  const vn30Value = toNumberOrNull(latestRow?.VN30AssetValue);
+  const vn30f1mValue = toNumberOrNull(latestRow?.VN30F1MAssetValue);
+  const totalAsset =
+    vn30Value === null && vn30f1mValue === null ? null : (vn30Value ?? 0) + (vn30f1mValue ?? 0);
+  const totalPnLGrid = totalAsset === null ? null : totalAsset - totalBaseAsset;
+  const futuresBaseMargin = configuredAssets.VN30F1M ?? null;
+  const futuresPnL =
+    futuresBaseMargin === null
+      ? null
+      : rows.reduce((sum, row) => {
+          const futuresRowValue = toNumberOrNull(row.VN30F1MAssetValue);
+          return futuresRowValue === null ? sum : sum + (futuresRowValue - futuresBaseMargin);
+        }, 0);
+  const appliedDate = String(latestRow?.assetAppliedDate ?? latestRow?.date ?? "");
+  return {
+    vn30Value,
+    vn30BaseAsset,
+    vn30f1mValue,
+    totalBaseAsset,
+    totalAsset,
+    totalPnLGrid,
+    futuresBaseMargin,
+    futuresPnL,
+    appliedDate
+  };
 }
 
 function renderOverview(): void {
@@ -2163,32 +2339,25 @@ function renderOverview(): void {
     overviewFuturesSubtextElement.textContent = t("overviewNoData");
     overviewTotalSubtextElement.textContent = t("overviewNoData");
     applyOverviewTabSearch();
+    scheduleOverviewSnapshot();
     return;
   }
 
-  const rows = buildMappingRows(currentMappingData);
-  const latestRow = rows[0] ?? null;
-  const configuredAssets = getConfiguredAssetInputs();
-  const vn30BaseAsset = configuredAssets.VN30 ?? null;
-  const totalBaseAsset =
-    (configuredAssets.VN30 ?? 0) + FUTURES_MARGIN_PER_CONTRACT;
-  const vn30Value = toNumberOrNull(latestRow?.VN30AssetValue);
-  const vn30f1mValue = toNumberOrNull(latestRow?.VN30F1MAssetValue);
-  const totalAsset =
-    vn30Value === null && vn30f1mValue === null
-      ? null
-      : (vn30Value ?? 0) + (vn30f1mValue ?? 0);
-  const totalPnL =
-    totalAsset === null ? null : totalAsset - totalBaseAsset;
-  const futuresBaseMargin = configuredAssets.VN30F1M ?? null;
-  const futuresPnL =
-    futuresBaseMargin === null
-      ? null
-      : rows.reduce((sum, row) => {
-          const futuresRowValue = toNumberOrNull(row.VN30F1MAssetValue);
-          return futuresRowValue === null ? sum : sum + (futuresRowValue - futuresBaseMargin);
-        }, 0);
-  const appliedDate = String(latestRow?.assetAppliedDate ?? latestRow?.date ?? "");
+  const tab = computeOverviewTabMetrics();
+  if (!tab) {
+    applyOverviewTabSearch();
+    scheduleOverviewSnapshot();
+    return;
+  }
+  const {
+    vn30Value,
+    vn30BaseAsset,
+    totalBaseAsset,
+    totalAsset,
+    totalPnLGrid,
+    futuresPnL,
+    appliedDate
+  } = tab;
 
   overviewVn30ValueElement.textContent = vn30Value === null ? "-" : formatAssetValue(vn30Value);
   overviewVn30ValueElement.className = `overview-value ${getComparisonClass(vn30Value, vn30BaseAsset)}`.trim();
@@ -2203,11 +2372,12 @@ function renderOverview(): void {
     totalAsset === null
       ? "-"
       : `${formatAssetValue(totalAsset)}${
-          totalPnL === null ? "" : ` (${totalPnL > 0 ? "+" : ""}${formatAssetValue(totalPnL)})`
+          totalPnLGrid === null ? "" : ` (${totalPnLGrid > 0 ? "+" : ""}${formatAssetValue(totalPnLGrid)})`
         }`;
   overviewTotalValueElement.className = `overview-value ${getComparisonClass(totalAsset, totalBaseAsset)}`.trim();
   overviewTotalSubtextElement.textContent = appliedDate ? `${t("overviewBaseDateLabel")}: ${appliedDate}` : t("overviewNoData");
   applyOverviewTabSearch();
+  scheduleOverviewSnapshot();
 }
 
 function getConfiguredAssetInputs(): Record<string, number | null> {
