@@ -1,9 +1,9 @@
 {
   "token": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoyMDcxOTg3MzM3LCJuYmYiOjE3NzE5ODczMzcsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI4NTMyMGFiMC02YzM5LTQ2MjAtODE3My1hZDllMTU5ZjE4ZjIiLCJhdXRoX3RpbWUiOjE3NzE5ODczMzcsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJuY2hpdGhhbmg5OTk5QGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiM2ZmZGViMDAtY2E3My00NjcxLThkZDItNzY4MzU3N2Y0MGY0IiwianRpIjoiOGI4ZDg5YjI2YTllYTU0Njk0OTg2NjMzYjc1M2UyYTgiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.YypqGdUD63c3pIQB98oyIYNSYRc5uMDgPvtf6sasaN64_Zx1SRQBGLMGfTHAK1n_nnsw6jNNumAAdZjksvfeYrf3hBT7RApZU3nhrGiWf9OJPMTtGcKqz-jjj-rtUIphG1O6f77IXp5xt47EmFOzw_7iUyir8GaPhhNNT-bMTJ6dfEquUL6jBMWINNUOwYszkYw3F498-FC02Oz3wq2hUwB4SdRiZQrkIx__oCzcc8p-dkqxk5R123OGxklXbEhCFn1GEXN7s0N4IaxdPmDsWrl9kFPYH9mCRerMYmJHiA-xzy9k1FtVrlOsPFO2-VrbsQDjDGpv7jNW3WduyoV_DA",
   "language": "vi",
-  "symbols": "VN30, VN30F1M, VIC, VCG, PNJ, KHG",
+  "symbols": "VN30, VN30F1M, VIC, VCG,BCM,NAB,GEG",
   "startDate": "2026-01-01",
-  "endDate": "2026-04-01",
+  "endDate": "2026-04-06",
   "notifyEnabled": true,
   "notifyOnHedgeChange": true,
   "notifyOnBuySignal": true,
@@ -12,72 +12,52 @@
   "discordWebhookUrl": "https://discord.com/api/webhooks/1484031442446061599/-hTqRM1EQfvHclGJDs-gdRaEW0GINHV8ZJHymGsFs7kd-U-YXuTsAniXw-UtsbwkBpb7",
   "portfolioPositions": [
     {
-      "symbol": "BSR",
-      "price": 27300,
-      "quantity": 300,
-      "sellPrice": 28850,
+      "symbol": "VCG",
+      "price": 22500,
+      "quantity": 1000,
       "marginPct": 50
     },
     {
-      "symbol": "CEO",
-      "price": 15437,
-      "quantity": 200,
-      "sellPrice": 15600
-    },
-    {
-      "symbol": "CEO",
-      "price": 15437,
-      "quantity": 600,
-      "sellPrice": 14600
-    },
-    {
-      "symbol": "HDG",
-      "price": 29195,
-      "quantity": 500,
-      "sellPrice": 30650
-    },
-    {
-      "symbol": "HPG",
-      "price": 26100,
+      "symbol": "VCG",
+      "price": 22200,
       "quantity": 1200,
-      "sellPrice": 27050,
       "marginPct": 50
     },
     {
-      "symbol": "HPG",
-      "price": 25940,
-      "quantity": 400,
-      "sellPrice": 26060
+      "symbol": "VIC",
+      "price": 139700,
+      "quantity": 100
     },
     {
-      "symbol": "HPG",
-      "price": 26923,
-      "quantity": 1300,
-      "sellPrice": 25650
+      "symbol": "GEG",
+      "price": 16200,
+      "quantity": 1000
     },
     {
-      "symbol": "NVL",
-      "price": 13250,
-      "quantity": 800,
-      "sellPrice": 13850
+      "symbol": "VIC",
+      "price": 141600,
+      "quantity": 500,
+      "marginPct": 50
     },
     {
-      "symbol": "NVL",
-      "price": 13650,
+      "symbol": "VCG",
+      "price": 21600,
       "quantity": 1000,
-      "sellPrice": 14000
+      "marginPct": 50
     },
     {
-      "symbol": "NVL",
-      "price": 14100,
-      "quantity": 700,
-      "sellPrice": 13850
+      "symbol": "KHG",
+      "price": 5524,
+      "quantity": 4000,
+      "sellPrice": 5380,
+      "marginPct": 30
     },
     {
-      "symbol": "NVL",
-      "price": 14350,
+      "symbol": "OCB",
+      "price": 11200,
       "quantity": 1000,
-      "sellPrice": 13850
+      "sellPrice": 11050,
+      "marginPct": 50
     },
     {
       "symbol": "OCB",
@@ -101,11 +81,105 @@
       "marginPct": 50
     },
     {
-      "symbol": "OCB",
-      "price": 11200,
-      "quantity": 1000,
-      "sellPrice": 11050,
+      "symbol": "NAB",
+      "price": 13050,
+      "quantity": 800,
+      "sellPrice": 13000,
       "marginPct": 50
+    },
+    {
+      "symbol": "NVL",
+      "price": 13250,
+      "quantity": 800,
+      "sellPrice": 13850
+    },
+    {
+      "symbol": "NVL",
+      "price": 14100,
+      "quantity": 700,
+      "sellPrice": 13850
+    },
+    {
+      "symbol": "NVL",
+      "price": 14350,
+      "quantity": 1000,
+      "sellPrice": 13850
+    },
+    {
+      "symbol": "NVL",
+      "price": 13650,
+      "quantity": 1000,
+      "sellPrice": 14000
+    },
+    {
+      "symbol": "CEO",
+      "price": 15437,
+      "quantity": 600,
+      "sellPrice": 14600
+    },
+    {
+      "symbol": "CEO",
+      "price": 15437,
+      "quantity": 200,
+      "sellPrice": 15600
+    },
+    {
+      "symbol": "HPG",
+      "price": 26923,
+      "quantity": 1300,
+      "sellPrice": 25650
+    },
+    {
+      "symbol": "HPG",
+      "price": 25940,
+      "quantity": 400,
+      "sellPrice": 26060
+    },
+    {
+      "symbol": "HPG",
+      "price": 26100,
+      "quantity": 1200,
+      "sellPrice": 27050,
+      "marginPct": 50
+    },
+    {
+      "symbol": "BSR",
+      "price": 27300,
+      "quantity": 300,
+      "sellPrice": 28850,
+      "marginPct": 50
+    },
+    {
+      "symbol": "HDG",
+      "price": 29195,
+      "quantity": 500,
+      "sellPrice": 30650
+    },
+    {
+      "symbol": "BCM",
+      "price": 54000,
+      "quantity": 500,
+      "sellPrice": 53000,
+      "marginPct": 50
+    },
+    {
+      "symbol": "PNJ",
+      "price": 108700,
+      "quantity": 200,
+      "sellPrice": 106700,
+      "marginPct": 50
+    },
+    {
+      "symbol": "VIC",
+      "price": 140283,
+      "quantity": 200,
+      "sellPrice": 128800
+    },
+    {
+      "symbol": "VIC",
+      "price": 140283,
+      "quantity": 50,
+      "sellPrice": 129500
     },
     {
       "symbol": "VIC",
@@ -122,44 +196,9 @@
     },
     {
       "symbol": "VIC",
-      "price": 140283,
-      "quantity": 50,
-      "sellPrice": 129500
-    },
-    {
-      "symbol": "VIC",
-      "price": 140283,
-      "quantity": 200,
-      "sellPrice": 128800
-    },
-    {
-      "symbol": "PNJ",
-      "price": 108700,
-      "quantity": 200,
-      "marginPct": 50
-    },
-    {
-      "symbol": "KHG",
-      "price": 5524,
-      "quantity": 4000,
-      "marginPct": 30
-    },
-    {
-      "symbol": "VIC",
       "price": 131922,
       "quantity": 100,
-      "marginPct": 50
-    },
-    {
-      "symbol": "VCG",
-      "price": 22500,
-      "quantity": 1000,
-      "marginPct": 50
-    },
-    {
-      "symbol": "VCG",
-      "price": 22200,
-      "quantity": 1200,
+      "sellPrice": 142100,
       "marginPct": 50
     }
   ],
@@ -508,6 +547,78 @@
       "amount": 2000000,
       "description": "điện thoại ông ngoại",
       "createdAt": "2026-04-01T08:39:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 25000,
+      "description": "bánh mì",
+      "createdAt": "2026-04-01T09:28:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 63000,
+      "description": "ht coffee",
+      "createdAt": "2026-04-01T10:49:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 150000,
+      "description": "bi da",
+      "createdAt": "2026-04-01T03:08:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 40000,
+      "description": "hủ tíu gõ",
+      "createdAt": "2026-04-01T03:08:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 210000,
+      "description": "thay nhớ + rửa xe",
+      "createdAt": "2026-04-01T03:09:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 400000,
+      "description": "ăn tối",
+      "createdAt": "2026-04-01T03:09:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 13500000,
+      "description": "mua 500 BCM",
+      "createdAt": "2026-04-02T04:23:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 5220000,
+      "description": "mua 800 NAB",
+      "createdAt": "2026-04-02T04:28:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 35400000,
+      "description": "mua VIC 500 ATC",
+      "createdAt": "2026-04-06T07:56:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 10800000,
+      "description": "mua VCG 1000",
+      "createdAt": "2026-04-03T08:00:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 16200000,
+      "description": "mua GEG 1000",
+      "createdAt": "2026-04-06T08:02:00.000Z"
+    },
+    {
+      "type": "withdrawal",
+      "amount": 3000000,
+      "description": "dặm ngõ",
+      "createdAt": "2026-04-05T08:09:00.000Z"
     }
   ],
   "derivativesOrders": [
@@ -574,6 +685,22 @@
       "entryPrice": 1000,
       "closePrice": 997,
       "description": "Short khi VIC +6.22%"
+    },
+    {
+      "symbol": "41I1G4000",
+      "type": "short",
+      "quantity": 1,
+      "entryPrice": 1000,
+      "closePrice": 1004,
+      "description": "Short khi mở gap giảm và đi ngang, stoploss 300"
+    },
+    {
+      "symbol": "41I1G4000",
+      "type": "short",
+      "quantity": 1,
+      "entryPrice": 1000,
+      "closePrice": 998,
+      "description": "-"
     }
   ]
 }
